@@ -5,14 +5,15 @@ const CheckBox = ({ film, handleCheckboxChange }) => {
 
   const toggleCheckbox = () => {
     setIsChecked(!isChecked);
-    handleCheckboxChange(film.title);
+    handleCheckboxChange(film);
   };
 
   return (
-    <div>
+    <div className="check-field">
       <label>
         <input
           type="checkbox"
+          className="checkbox"
           value={film.title}
           checked={isChecked}
           onChange={toggleCheckbox}

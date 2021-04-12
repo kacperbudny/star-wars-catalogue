@@ -4,25 +4,23 @@ import "./App.css";
 import CharactersGrid from "./components/CharactersGrid";
 import SearchBar from "./components/SearchBar";
 import CheckBox from "./components/CheckBox";
+import Loader from "./components/Loader";
 
 const App = () => {
   const [characters, setCharacters] = useState([]);
-  const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [films, setFilms] = useState([]);
   const [isLoadingFilms, setIsLoadingFilms] = useState(true);
   const [isLoadingCharacters, setIsLoadingCharacters] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilms, setSelectedFilms] = useState([]);
+  const [selectedFilms, setSelectedFilms] = useState();
   const maxCharacters = useRef();
 
   useEffect(() => {
     const fetchFilms = async () => {
       const resultFilms = await axios(`https://swapi.dev/api/films`);
       setFilms(resultFilms.data.results);
-
-      const filmNames = resultFilms.data.results.map(f => f.title);
-      setSelectedFilms(filmNames)
+      setSelectedFilms(resultFilms.data.results);
 
       setIsLoadingFilms(false);
     };
@@ -37,6 +35,7 @@ const App = () => {
       const resultCharacters = await axios(
         `https://swapi.dev/api/people/?search=${searchQuery}`
       );
+
       setCharacters(resultCharacters.data.results);
 
       maxCharacters.current = resultCharacters.data.count;
@@ -46,14 +45,6 @@ const App = () => {
 
     fetchCharacters();
   }, [searchQuery]);
-
-  useEffect(() => {
-    const filteredUrls = films.filter(f => selectedFilms.find(ch => ch === f.title)).map(f => f.url);
-    const filtered = characters.filter(ch => ch.films.some(f => filteredUrls.some(fu => fu === f)));
-
-    setFilteredCharacters(filtered);
-    console.log(filtered)
-  }, [characters, selectedFilms])
 
   const loadMoreCharacters = async () => {
     setIsLoadingMore(true);
@@ -75,48 +66,71 @@ const App = () => {
     setIsLoadingMore(false);
   };
 
-  const handleCheckboxChange = (title) => {
-    if (selectedFilms.some((elem) => elem === title)) {
-      setSelectedFilms(selectedFilms.filter((t) => t !== title));
+  const handleCheckboxChange = (film) => {
+    if (selectedFilms.some((elem) => elem === film)) {
+      setSelectedFilms(selectedFilms.filter((t) => t !== film));
     } else {
-      setSelectedFilms([...selectedFilms, title]);
+      setSelectedFilms([...selectedFilms, film]);
     }
   };
 
   return (
     <div className="App">
       {isLoadingFilms ? (
-        <h2>Loading films...</h2>
+        <div className="loader-container">
+          <Loader />
+        </div>
       ) : (
         <>
-          <SearchBar handleChange={setSearchQuery} />
-          {films.map((f) => (
-            <CheckBox
-              film={f}
-              key={f.title}
-              handleCheckboxChange={handleCheckboxChange}
-            />
-          ))}
-          {isLoadingCharacters ? (
-            <h2>Loading characters...</h2>
-          ) : (
-            <>
-              <CharactersGrid characters={filteredCharacters} films={films} />
-              {isLoadingMore ? (
-                <h2>Loading more...</h2>
+          <div className="sidebar">
+            <h1>Star Wars Characters Catalogue</h1>
+            <div className="filtering-section">
+              <SearchBar handleChange={setSearchQuery} />
+              <div className="filter-by-film">
+                <p>Filter by film:</p>
+                {films.map((f) => (
+                  <CheckBox
+                    film={f}
+                    key={f.title}
+                    handleCheckboxChange={handleCheckboxChange}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="container">
+            <main>
+              {isLoadingCharacters ? (
+                <div className="loader-container">
+                  <Loader />
+                </div>
               ) : (
                 <>
-                  {characters.length >= maxCharacters.current ? (
-                    <></>
+                  <CharactersGrid
+                    characters={characters}
+                    films={films}
+                    selectedFilms={selectedFilms}
+                  />
+                  {isLoadingMore ? (
+                    <Loader />
                   ) : (
-                    <button type="button" onClick={() => loadMoreCharacters()}>
-                      Load more
-                    </button>
+                    <>
+                      {characters.length >= maxCharacters.current ? (
+                        <></>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => loadMoreCharacters()}
+                        >
+                          Load more
+                        </button>
+                      )}
+                    </>
                   )}
                 </>
               )}
-            </>
-          )}
+            </main>
+          </div>
         </>
       )}
     </div>

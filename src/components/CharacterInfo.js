@@ -8,6 +8,7 @@ const CharacterInfo = ({ character, films }) => {
       onClick={() => {
         setIsOpen(!isOpen);
       }}
+      className="character-card"
     >
       <h3>{character.name}</h3>
       <p>
@@ -24,7 +25,7 @@ const CharacterInfo = ({ character, films }) => {
           <p>
             <strong>Height:</strong> {character.height} cm
           </p>
-          <p>
+          <p className="films">
             <strong>Films:</strong>
           </p>
           <ul>

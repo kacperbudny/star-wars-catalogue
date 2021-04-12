@@ -8,6 +8,7 @@ const SearchBar = ({ handleChange }) => {
       <form>
         <input
           type="text"
+          className="search-bar"
           placeholder="Search characters by name"
           value={text}
           onChange={(e) => {
