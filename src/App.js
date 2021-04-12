@@ -3,47 +3,57 @@ import axios from "axios";
 import "./App.css";
 import CharactersGrid from "./components/CharactersGrid";
 import SearchBar from "./components/SearchBar";
+import CheckBox from "./components/CheckBox";
 
 const App = () => {
   const [characters, setCharacters] = useState([]);
+  const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [films, setFilms] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingFilms, setIsLoadingFilms] = useState(true);
+  const [isLoadingCharacters, setIsLoadingCharacters] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const maxCharacters = useRef(82);
+  const [selectedFilms, setSelectedFilms] = useState([]);
+  const maxCharacters = useRef();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFilms = async () => {
       const resultFilms = await axios(`https://swapi.dev/api/films`);
       setFilms(resultFilms.data.results);
 
-      const resultCharacters = await axios(`https://swapi.dev/api/people`);
-      setCharacters(resultCharacters.data.results);
-      maxCharacters.current = resultCharacters.data.count;
+      const filmNames = resultFilms.data.results.map(f => f.title);
+      setSelectedFilms(filmNames)
 
-      setIsLoading(false);
+      setIsLoadingFilms(false);
     };
 
-    fetchData();
+    fetchFilms();
   }, []);
 
   useEffect(() => {
     const fetchCharacters = async () => {
-      setIsLoading(true);
+      setIsLoadingCharacters(true);
 
       const resultCharacters = await axios(
         `https://swapi.dev/api/people/?search=${searchQuery}`
       );
       setCharacters(resultCharacters.data.results);
+
       maxCharacters.current = resultCharacters.data.count;
 
-      setIsLoading(false);
-
-      console.log(maxCharacters.current);
+      setIsLoadingCharacters(false);
     };
 
     fetchCharacters();
   }, [searchQuery]);
+
+  useEffect(() => {
+    const filteredUrls = films.filter(f => selectedFilms.find(ch => ch === f.title)).map(f => f.url);
+    const filtered = characters.filter(ch => ch.films.some(f => filteredUrls.some(fu => fu === f)));
+
+    setFilteredCharacters(filtered);
+    console.log(filtered)
+  }, [characters, selectedFilms])
 
   const loadMoreCharacters = async () => {
     setIsLoadingMore(true);
@@ -65,24 +75,45 @@ const App = () => {
     setIsLoadingMore(false);
   };
 
+  const handleCheckboxChange = (title) => {
+    if (selectedFilms.some((elem) => elem === title)) {
+      setSelectedFilms(selectedFilms.filter((t) => t !== title));
+    } else {
+      setSelectedFilms([...selectedFilms, title]);
+    }
+  };
+
   return (
     <div className="App">
-      <SearchBar handleChange={setSearchQuery} />
-      {isLoading ? (
-        <h2>Loading...</h2>
+      {isLoadingFilms ? (
+        <h2>Loading films...</h2>
       ) : (
         <>
-          <CharactersGrid characters={characters} films={films} />
-          {isLoadingMore ? (
-            <h2>Loading more...</h2>
+          <SearchBar handleChange={setSearchQuery} />
+          {films.map((f) => (
+            <CheckBox
+              film={f}
+              key={f.title}
+              handleCheckboxChange={handleCheckboxChange}
+            />
+          ))}
+          {isLoadingCharacters ? (
+            <h2>Loading characters...</h2>
           ) : (
             <>
-              {characters.length >= maxCharacters.current ? (
-                <></>
+              <CharactersGrid characters={filteredCharacters} films={films} />
+              {isLoadingMore ? (
+                <h2>Loading more...</h2>
               ) : (
-                <button type="button" onClick={() => loadMoreCharacters()}>
-                  Load more
-                </button>
+                <>
+                  {characters.length >= maxCharacters.current ? (
+                    <></>
+                  ) : (
+                    <button type="button" onClick={() => loadMoreCharacters()}>
+                      Load more
+                    </button>
+                  )}
+                </>
               )}
             </>
           )}
