@@ -2,32 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
 import CharactersGrid from "./components/CharactersGrid";
-import Modal from "react-modal";
-import ModalContent from "./components/ModalContent";
-
-Modal.setAppElement("#root");
-
-const modalStyle = {
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  content: {
-    maxWidth: "500px",
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-  },
-};
+import SearchBar from "./components/SearchBar";
 
 const App = () => {
   const [characters, setCharacters] = useState([]);
   const [films, setFilms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState();
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const maxCharacters = useRef(82);
 
   useEffect(() => {
@@ -43,12 +25,31 @@ const App = () => {
     };
 
     fetchData();
-    
   }, []);
 
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      setIsLoading(true);
+
+      const resultCharacters = await axios(
+        `https://swapi.dev/api/people/?search=${searchQuery}`
+      );
+      setCharacters(resultCharacters.data.results);
+      maxCharacters.current = resultCharacters.data.count;
+
+      setIsLoading(false);
+
+      console.log(maxCharacters.current);
+    };
+
+    fetchCharacters();
+  }, [searchQuery]);
+
   const loadMoreCharacters = async () => {
+    setIsLoadingMore(true);
+
     const result = await axios(
-      `https://swapi.dev/api/people/?page=${Math.floor(
+      `https://swapi.dev/api/people/?search=${searchQuery}&page=${Math.floor(
         characters.length / 10 + 1
       )}`
     );
@@ -60,37 +61,33 @@ const App = () => {
     );
     const newCharacters = characters.concat(additionalFiveCharacters);
     setCharacters(newCharacters);
+
+    setIsLoadingMore(false);
   };
 
   return (
     <div className="App">
+      <SearchBar handleChange={setSearchQuery} />
       {isLoading ? (
         <h2>Loading...</h2>
       ) : (
         <>
-          <CharactersGrid
-            characters={characters}
-            setModalOpen={() => setIsModalOpen(true)}
-            selectCharacter={setSelectedCharacter}
-          />
-          {characters.length >= maxCharacters.current ? (
-            <></>
+          <CharactersGrid characters={characters} films={films} />
+          {isLoadingMore ? (
+            <h2>Loading more...</h2>
           ) : (
-            <button type="button" onClick={() => loadMoreCharacters()}>
-              Load more
-            </button>
+            <>
+              {characters.length >= maxCharacters.current ? (
+                <></>
+              ) : (
+                <button type="button" onClick={() => loadMoreCharacters()}>
+                  Load more
+                </button>
+              )}
+            </>
           )}
         </>
       )}
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
-        style={modalStyle}
-      >
-        <ModalContent character={selectedCharacter} films={films}/>
-      </Modal>
     </div>
   );
 };

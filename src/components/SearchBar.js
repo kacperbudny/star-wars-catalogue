@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const SearchBar = () => {
+const SearchBar = ({ handleChange }) => {
   const [text, setText] = useState("");
 
   return (
@@ -10,7 +10,10 @@ const SearchBar = () => {
           type="text"
           placeholder="Search characters by name"
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => {
+            setText(e.target.value);
+            handleChange(e.target.value);
+          }}
         />
       </form>
     </div>

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 
-const CharacterInfo = ({ character, setModalOpen, selectCharacter }) => {
+const CharacterInfo = ({ character, films }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div
       onClick={() => {
-        setModalOpen();
-        selectCharacter(character);
+        setIsOpen(!isOpen)
       }}
     >
       <h3>{character.name}</h3>
@@ -15,6 +16,25 @@ const CharacterInfo = ({ character, setModalOpen, selectCharacter }) => {
       <p>
         <strong>Birth year:</strong> {character.birth_year}
       </p>
+      <p>
+        <strong>Mass:</strong> {character.mass} kg
+      </p>
+      {isOpen && (<div>
+        <p>
+          <strong>Height:</strong> {character.height} cm
+        </p>
+        <p>
+          <strong>Films:</strong>
+        </p>
+        <ul>
+          {character.films.map((characterFilm) => (
+            <li key={characterFilm}>
+              {films.find((film) => film.url === characterFilm).title}
+            </li>
+          ))}
+        </ul>
+      </div>)}
+      
     </div>
   );
 };

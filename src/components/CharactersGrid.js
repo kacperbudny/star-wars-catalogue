@@ -1,15 +1,14 @@
 import React from "react";
 import CharacterInfo from "./CharacterInfo";
 
-const CharactersGrid = ({ characters, setModalOpen, selectCharacter }) => {
+const CharactersGrid = ({ characters, films }) => {
   return (
     <div>
       {characters.map((character) => (
         <CharacterInfo
           key={character.name}
           character={character}
-          setModalOpen={setModalOpen}
-          selectCharacter={selectCharacter}
+          films={films}
         />
       ))}
     </div>
