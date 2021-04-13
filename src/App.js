@@ -14,6 +14,7 @@ const App = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilms, setSelectedFilms] = useState();
+  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const maxCharacters = useRef();
 
   useEffect(() => {
@@ -83,8 +84,18 @@ const App = () => {
       ) : (
         <>
           <div className="sidebar">
+            <div
+              className={`hamburger ${isHamburgerOpen ? "hamburger-on" : ""}`}
+              onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}
+            >
+              <div className="bar1"></div>
+              <div className="bar2"></div>
+              <div className="bar3"></div>
+            </div>
             <h1>Star Wars Characters Catalogue</h1>
-            <div className="filtering-section">
+            <div
+              className={`filtering-section ${isHamburgerOpen ? "open" : ""}`}
+            >
               <SearchBar handleChange={setSearchQuery} />
               <div className="filter-by-film">
                 <p>Filter by film:</p>

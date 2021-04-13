@@ -61,6 +61,11 @@ input:focus {
 .filter-by-film p {
   text-align: center;
   font-weight: bold;
+  width:auto;
+}
+
+.filter-by-film {
+  margin-bottom: 20px;
 }
 
 .check-field {
@@ -68,6 +73,7 @@ input:focus {
   display: flex;
   align-items: center;
   opacity: 0.7;
+  width: fit-content;
 }
 
 label {
@@ -111,7 +117,7 @@ label {
 }
 
 main {
-  padding: 30px 60px;
+  padding: 10px 60px 30px 60px;
   width: 100%;
 }
 
@@ -165,6 +171,7 @@ button {
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
   outline: none;
+  cursor: pointer;
 }
 
 button:hover {
@@ -173,6 +180,10 @@ button:hover {
 
 button:active {
   background: rgb(221, 188, 0);
+}
+
+.hamburger {
+  display: none;
 }
 
 /* SPINNER */
@@ -233,5 +244,71 @@ button:active {
   40% {
     -webkit-transform: scale(1);
     transform: scale(1);
+  }
+}
+
+@media (max-width: 900px)
+{
+  .App {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .container {
+    margin-left: 0;
+  }
+
+  main {
+    padding: 10px 30px;
+  }
+
+  .hamburger {
+    display: inline-block;
+    position:absolute;
+    cursor: pointer;
+    top: 8px;
+  }
+
+  .bar1, .bar2, .bar3 {
+    width: 35px;
+    height: 5px;
+    background-color: #fff;
+    margin: 6px 0;
+    transition: 0.4s;
+  }
+
+  .hamburger-on .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-9px, 6px) ;
+    transform: rotate(-45deg) translate(-9px, 6px) ;
+  }
+  
+  .hamburger-on .bar2 {
+    opacity: 0;
+  }
+  
+  .hamburger-on .bar3 {
+    -webkit-transform: rotate(45deg) translate(-8px, -8px) ;
+    transform: rotate(45deg) translate(-8px, -8px) ;
+  }
+
+  .filtering-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1s ease-in-out;
+  }
+
+  .open {
+    max-height: 400px;
+  }
+
+  h1 {
+    margin-top: 0;
+    padding-left: 50px;
+    padding-right: 50px;
   }
 }
