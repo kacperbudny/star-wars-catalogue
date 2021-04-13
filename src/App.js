@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
-import CharactersGrid from "./components/content/CharactersGrid";
 import Loader from "./components/Loader";
 import Sidebar from "./components/sidebar/Sidebar";
 import MainContent from "./components/content/MainContent";
