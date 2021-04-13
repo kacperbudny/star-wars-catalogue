@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
-import CharactersGrid from "./components/CharactersGrid";
-import SearchBar from "./components/SearchBar";
-import CheckBox from "./components/CheckBox";
+import CharactersGrid from "./components/content/CharactersGrid";
 import Loader from "./components/Loader";
+import Sidebar from "./components/sidebar/Sidebar";
+import MainContent from "./components/content/MainContent";
 
 const App = () => {
   const [characters, setCharacters] = useState([]);
@@ -83,65 +83,22 @@ const App = () => {
         </div>
       ) : (
         <>
-          <div className="sidebar">
-            <div
-              className={`hamburger ${isHamburgerOpen ? "hamburger-on" : ""}`}
-              onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}
-            >
-              <div className="bar1"></div>
-              <div className="bar2"></div>
-              <div className="bar3"></div>
-            </div>
-            <h1>Star Wars Characters Catalogue</h1>
-            <div
-              className={`filtering-section ${isHamburgerOpen ? "open" : ""}`}
-            >
-              <SearchBar handleChange={setSearchQuery} />
-              <div className="filter-by-film">
-                <p>Filter by film:</p>
-                {films.map((f) => (
-                  <CheckBox
-                    film={f}
-                    key={f.title}
-                    handleCheckboxChange={handleCheckboxChange}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="container">
-            <main>
-              {isLoadingCharacters ? (
-                <div className="loader-container">
-                  <Loader />
-                </div>
-              ) : (
-                <>
-                  <CharactersGrid
-                    characters={characters}
-                    films={films}
-                    selectedFilms={selectedFilms}
-                  />
-                  {isLoadingMore ? (
-                    <Loader />
-                  ) : (
-                    <>
-                      {characters.length >= maxCharacters.current ? (
-                        <></>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => loadMoreCharacters()}
-                        >
-                          Load more
-                        </button>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-            </main>
-          </div>
+          <Sidebar
+            isHamburgerOpen={isHamburgerOpen}
+            setIsHamburgerOpen={setIsHamburgerOpen}
+            setSearchQuery={setSearchQuery}
+            films={films}
+            handleCheckboxChange={handleCheckboxChange}
+          />
+          <MainContent
+            isLoadingCharacters={isLoadingCharacters}
+            characters={characters}
+            films={films}
+            selectedFilms={selectedFilms}
+            isLoadingMore={isLoadingMore}
+            maxCharacters={maxCharacters}
+            loadMoreCharacters={loadMoreCharacters}
+          />
         </>
       )}
     </div>
