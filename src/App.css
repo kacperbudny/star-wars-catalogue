@@ -122,7 +122,7 @@ main {
   border: 1px solid lightgray;
   border-radius: 16px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s, height 0.2s;
 }
 
 .character-card:hover {
@@ -148,6 +148,11 @@ li {
 .films {
   padding: 0;
   margin: 6px 0;
+}
+
+.collapse {
+  overflow: hidden;
+  margin-top: -16px;
 }
 
 button {

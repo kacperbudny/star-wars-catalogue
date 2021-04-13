@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AnimateHeight from "react-animate-height";
 
 const CharacterInfo = ({ character, films }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +9,7 @@ const CharacterInfo = ({ character, films }) => {
       onClick={() => {
         setIsOpen(!isOpen);
       }}
-      className="character-card"
+      className={"character-card"}
     >
       <h3>{character.name}</h3>
       <p>
@@ -17,8 +18,8 @@ const CharacterInfo = ({ character, films }) => {
       <p>
         <strong>Birth year:</strong> {character.birth_year}
       </p>
-      {isOpen && (
-        <div>
+      <AnimateHeight duration={500} height={isOpen ? "auto" : 0}>
+        <div className="collapse">
           <p>
             <strong>Mass:</strong> {character.mass} kg
           </p>
@@ -36,7 +37,7 @@ const CharacterInfo = ({ character, films }) => {
             ))}
           </ul>
         </div>
-      )}
+      </AnimateHeight>
     </div>
   );
 };
