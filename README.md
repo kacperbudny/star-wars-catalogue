@@ -1,70 +1,78 @@
-# Getting Started with Create React App
+# Star Wars Catalogue
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It's a simple React app that displays data about Star Wars characters. The data comes from SWAPI (https://swapi.dev/).
 
-## Available Scripts
+## Features
+* Displaying data about characters
+* Filtering characters by film
+* Searching characters by name
+* The app is fully responsive
 
-In the project directory, you can run:
+## Screenshots
 
-### `npm start`
+![App in full width](screenshots/screenshot1.png)
+![App in mobile width](screenshots/screenshot2.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Setup
+Download the source code and perform:
+```
+npm install
+npm start
+```
+To install dependencies and run the app.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Code samples
+```javascript
+    const loadMoreCharacters = async () => {
+    setIsLoadingMore(true);
 
-### `npm test`
+    const result = await axios(
+      `https://swapi.dev/api/people/?search=${searchQuery}&page=${Math.floor(
+        characters.length / 10 + 1
+      )}`
+    );
+    const firstElement = characters.length % 10;
+    const lastElement = firstElement + 5;
+    const additionalFiveCharacters = result.data.results.slice(
+      firstElement,
+      lastElement
+    );
+    const newCharacters = characters.concat(additionalFiveCharacters);
+    setCharacters(newCharacters);
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    setIsLoadingMore(false);
+  };
+```
 
-### `npm run build`
+The above function loads only 5 new characters from the API.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```jsx
+    <AnimateHeight duration={500} height={isOpen ? "auto" : 0}>
+        <div className="collapse">
+          <p>
+            <strong>Mass:</strong> {character.mass} kg
+          </p>
+          <p>
+            <strong>Height:</strong> {character.height} cm
+          </p>
+          <p className="films">
+            <strong>Films:</strong>
+          </p>
+          <ul>
+            {character.films.map((characterFilm) => (
+              <li key={characterFilm}>
+                {films.find((film) => film.url === characterFilm).title}
+              </li>
+            ))}
+          </ul>
+        </div>
+    </AnimateHeight>
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The above code displays additional data about character after the character card is clicked on and gets the titles of the movies in which the character appears.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Technologies
+* React.js
+* SWAPI (https://swapi.dev/)
+* Axios
+* react-animate-height
